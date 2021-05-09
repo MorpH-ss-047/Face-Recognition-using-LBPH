@@ -4,11 +4,12 @@ import os
 
 
 def faceDetection(input_image):
+    classifier_paths = r"C:\Users\ASUS\anaconda3\envs\facerecognition\Lib\site-packages\cv2\data\haarcascade_frontalface_alt.xml"
+
     gray_image = cv2.cvtColor(input_image, cv2.COLOR_BGR2GRAY)
-    face_haar = cv2.CascadeClassifier(
-        r"C:\Users\ASUS\anaconda3\envs\facerecognition\Lib\site-packages\cv2\data\haarcascade_frontalface_alt.xml")
+    face_haar = cv2.CascadeClassifier(classifier_paths)
     faces = face_haar.detectMultiScale(
-        gray_image, scaleFactor=1.3, minNeighbors=3)
+        gray_image,scaleFactor=1.3, minNeighbors=3)
 
     return faces, gray_image
 
@@ -43,14 +44,6 @@ def labels_for_training_data(directory):
     return faces, faceID
 
 
-def trainClassifier(faces, faceID):
-    """Trains the model"""
-    face_recogniser = cv2.face.LBPHFaceRecognizer_create()
-    face_recogniser.train(faces, np.array(faceID))
-
-    return face_recogniser
-
-
 def draw_rect(test_img, face):
     """Draws bounding boxes"""
     (x, y, w, h) = face
@@ -71,11 +64,10 @@ def train():
 
     # Training will begin from here
 
-    faces, faceID = labels_for_training_data(
-        r'Images')
-    face_recogniser = trainClassifier(faces, faceID)
-    face_recogniser.save(
-        r'trainingData.yml')
+    faces, faceID = labels_for_training_data(r'Images')
+    face_recogniser = cv2.face.LBPHFaceRecognizer_create()
+    face_recogniser.train(faces, np.array(faceID))
+    face_recogniser.save(r'trainingData.yml')
 
     name = {0: 'Subha'}
 
